@@ -17,12 +17,17 @@ namespace Tutorial
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
+        
         SpriteBatch spriteBatch;
-        float scale = 0.75f;
+
+        List<Sprite> sprites = new List<Sprite>();
+        Vector2 scale = new Vector2(0.75f);      // fixme
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = 800;
             Content.RootDirectory = "Content";
         }
 
@@ -39,14 +44,6 @@ namespace Tutorial
             base.Initialize();
         }
 
-        // This is a texture we can render.
-        Texture2D myTexture;
-
-        // Set the coordinates to draw the sprite at.
-        Vector2 spritePosition = Vector2.Zero;
-        
-        // Store some information about the sprite's motion.
-        Vector2 spriteSpeed = new Vector2(50.0f, 50.0f);
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -56,7 +53,26 @@ namespace Tutorial
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            myTexture = Content.Load<Texture2D>("yumi");
+
+            // Create my first sprite
+
+            Vector2 position = Vector2.Zero;
+                /* This is the starting position, and not where the scale and rotation is done
+                 * Check the other Vector2 field "origin" in Sprite.cs for scale position, etc
+                 */
+            Vector2 scale = new Vector2(0.75f);     // Think of it as a %... 75%
+            Color tint = Color.White;
+            Sprite mySprite = new Sprite(Content, "yumi", position, scale, tint);
+            sprites.Add(mySprite);
+
+            // Create my second sprite
+
+            Vector2 position2 = new Vector2(1.0f);
+            Vector2 scale2 = new Vector2(1.0f);
+            Color tint2 = Color.Tomato;     // 'cause tomatoes. You jelly?
+            Vector2 origin2 = new Vector2(100.0f);
+            Sprite mySprite2 = new Sprite(Content, "yumi", position, scale, tint, origin2);  // I like using Yumi, you mad?
+            sprites.Add(mySprite2);
 
             // TODO: use this.Content to load your game content here
         }
@@ -83,51 +99,13 @@ namespace Tutorial
 
             // TODO: Add your update logic here
 
-            // Move the sprite by speed, scaled by elapsed time.
-            spritePosition +=
-                spriteSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            /*
-            float MaxX =
-                graphics.GraphicsDevice.Viewport.Width - (myTexture.Width * scale);
-            float MinX = 0;
-            float MaxY =
-                graphics.GraphicsDevice.Viewport.Height - (myTexture.Height * scale);
-            float MinY = 0;
-            */
-
-            int MaxX =
-                graphics.GraphicsDevice.Viewport.Width - (int)(myTexture.Width * scale);
-            int MinX = 0;
-            int MaxY =
-                graphics.GraphicsDevice.Viewport.Height - (int)(myTexture.Height * scale);
-            int MinY = 0;
-
-            // Check for bounce.
-            if (spritePosition.X > MaxX)
+            foreach (Sprite sprite in sprites)
             {
-                spriteSpeed.X *= -1;
-                spritePosition.X = MaxX;
-            }
+                sprite.Update(gameTime, graphics);
 
-            else if (spritePosition.X < MinX)
-            {
-                spriteSpeed.X *= -1;
-                spritePosition.X = MinX;
             }
-
-            if (spritePosition.Y > MaxY)
-            {
-                spriteSpeed.Y *= -1;
-                spritePosition.Y = MaxY;
-            }
-
-            else if (spritePosition.Y < MinY)
-            {
-                spriteSpeed.Y *= -1;
-                spritePosition.Y = MinY;
-            }
-
+            
+            //sprites.ElementAt(0).Update(gameTime,graphics);
 
             base.Update(gameTime);
         }
@@ -143,13 +121,17 @@ namespace Tutorial
             // TODO: Add your drawing code here
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
             // Draw the sprite.
-            
-            Vector2 spriteOrigin = new Vector2(0, 0);
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            spriteBatch.Draw(myTexture, spritePosition, null, Color.White, 0, spriteOrigin, scale, SpriteEffects.None, 0);
+            
+            foreach (Sprite sprite in sprites)
+            {
+                sprite.Draw(spriteBatch);
+            }
+             
+            //sprites.ElementAt(0).Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
