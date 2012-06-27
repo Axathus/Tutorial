@@ -17,7 +17,11 @@ namespace Tutorial
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        
+
+        SpriteFont StandardFont;
+        Vector2 FontPos;
+
+        SpriteFont spriteFont;
         SpriteBatch spriteBatch;
 
         List<Sprite> sprites = new List<Sprite>();
@@ -53,6 +57,7 @@ namespace Tutorial
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            StandardFont = Content.Load<SpriteFont>("Axathus Standard");
 
             // Create my first sprite
 
@@ -75,6 +80,8 @@ namespace Tutorial
             sprites.Add(mySprite2);
 
             // TODO: use this.Content to load your game content here
+            FontPos = new Vector2(  graphics.GraphicsDevice.Viewport.Width / 2,
+                                    graphics.GraphicsDevice.Viewport.Height / 2);
         }
 
         /// <summary>
@@ -129,7 +136,13 @@ namespace Tutorial
             {
                 sprite.Draw(spriteBatch);
             }
-             
+
+            string output = "Hello World";
+
+            Vector2 FontOrigin = StandardFont.MeasureString(output) / 2;
+            spriteBatch.DrawString(StandardFont, output, FontPos, Color.AliceBlue,
+                                    0, FontOrigin, 1.0f, SpriteEffects.None, 0.5f);
+
             //sprites.ElementAt(0).Draw(spriteBatch);
 
             spriteBatch.End();
